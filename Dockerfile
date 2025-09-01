@@ -20,6 +20,15 @@ RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local
 # Install Node dependencies and build assets
 RUN npm install && npm run build
 
+RUN a2enmod rewrite
+
+RUN echo '<Directory /var/www/public>\n\
+    AllowOverride All\n\
+    Require all granted\n\
+</Directory>' > /etc/apache2/conf-available/laravel.conf \
+    && a2enconf laravel
+
+
 # Make Apache serve from Laravel's public directory
 RUN rm -rf /var/www/html && ln -s /var/www/public /var/www/html
 
